@@ -1,4 +1,4 @@
-name: Build Minecraft Mod
+name: Build AutoSand JAR
 
 on:
   workflow_dispatch:
@@ -14,20 +14,21 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout source
+      - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Java 21
+      - name: Setup Java
         uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: '21'
+          cache: gradle
 
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
 
       - name: Build JAR
-        run: gradle build --no-daemon
+        run: gradle wrapper --gradle-version 9.2.0 --no-daemon && ./gradlew build --no-daemon
 
       - name: Upload JAR
         uses: actions/upload-artifact@v4
@@ -35,13 +36,3 @@ jobs:
           name: AutoSand-JAR
           path: build/libs/*.jar
           if-no-files-found: error
-:::
-
-### Cách lấy file JAR trên điện thoại
-1. Vào GitHub → repository của bạn.
-2. Mở tab **Actions**.
-3. Chọn workflow **Build Minecraft Mod**.
-4. Chờ chạy xong, trạng thái phải là dấu tích xanh ✅.
-5. Kéo xuống mục **Artifacts**, nhấn `AutoSand-JAR` để tải file `.jar`.
-
-**Lưu ý:** Lỗi `duplicate class: autosand.AutoMiner` trước đó phải được sửa trước thì mới build thành công. Workflow này chỉ biên dịch và đóng gói code, không tự sửa lỗi Java.
